@@ -1,22 +1,22 @@
-// const btn = document.querySelector("button");
+const btnIncrease = document.querySelector('.bigger');
+const btnDecrease = document.querySelector('.smaller');
+const text = document.querySelector('p');
 
-// btn.addEventListener("mouseover", function () {
-//     console.log("klik");
-// })
+text.style.fontSize = "25px"
 
-// let clickNumbers = 0;
+let textSize = 10;
 
-// btn.addEventListener("click", function () {
-//     clickNumbers++;
-//     console.log("Ilość klinięć: " + clickNumbers);
-// })
+text.style.fontSize = textSize + "px";
 
-// document.addEventListener("scroll", function () {
-//     console.log("skrolujesz o " + window.scrollY + "px");
-// })
+function textIncrease() {
+    textSize++;
+    text.style.fontSize = textSize + "px";
+}
 
-const spanResult = document.querySelector("span");
+function textDecrease() {
+    textSize--;
+    text.style.fontSize = textSize + "px";
+}
 
-window.addEventListener("scroll", function () {
-    spanResult.textContent = window.scrollY;
-})
+btnIncrease.addEventListener("click", textIncrease);
+btnDecrease.addEventListener("click", textDecrease);
