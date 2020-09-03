@@ -1,10 +1,22 @@
-/* body {
-    height: 300vh;
+button {
+    display: block;
+    margin: 10px auto;
 }
 
-p {
-    font-size: 30px;
-    position: fixed;
-    left: 20px;
-    top: 20px;
-} */
+div {
+    height: 30px;
+    width: 30px;
+    margin: 5px;
+    float: left;
+    color: white;
+    background-color: #000000;
+    text-align: center;
+    line-height: 30px;
+}
+
+.circle {
+    border: 1px solid black;
+    border-radius: 50%;
+    color: black;
+    background-color: #fff;
+}
