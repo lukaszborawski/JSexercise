@@ -1,17 +1,34 @@
-const button = document.querySelector('.btn');
+let size = 10;
+let orderElement = 1;
 
-let number = 0;
+const init = () => {
+    const button = document.createElement('button');
+    const button1 = document.createElement('button');
+    const list = document.createElement('ul');
+    button.textContent = "Stwórz 10 elementów"
+    button1.textContent = "Wyczyść"
+    document.body.appendChild(button);
+    document.body.appendChild(button1);
+    document.body.appendChild(list);
 
-const addBox = function () {
-    number++;
-    const div = document.createElement('div');
-    div.innerText = number;
+    button.addEventListener("click", createLiElements);
+    button1.addEventListener("click", removeLiElements);
 
-    if (number % 5 == 0) {
-        div.classList.add('circle');
-    }
-    document.body.appendChild(div);
 }
 
+const createLiElements = () => {
+    for (let i = 0; i < 10; i++) {
+        const item = document.createElement('li')
+        item.textContent = "Element o numerze" + orderElement++;
+        document.querySelector('ul').appendChild(item);
+    }
+    // console.log('klik');
+}
 
-button.addEventListener("click", addBox);
+const removeLiElements = () => {
+    document.querySelector('ul').textContent = "";
+    size = 10;
+    orderElement = 1;
+}
+
+init();
