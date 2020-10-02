@@ -1,76 +1,73 @@
-const gameSummary = {
-    numbers: 0,
-    wins: 0,
-    losses: 0,
-    draws: 0,
-}
+const cardsColor = ["red", "red", "green", "green", "blue", "blue", "brown", "brown", "yellow", "yellow", "gray", "gray", "cadetblue", "cadetblue", "violet", "violet", "lightgreen", "lightgreen"];
 
-const game = {
-    playerHand: "",
-    aiHand: "",
-}
+let cards = document.querySelectorAll('div');
+cards = [...cards];
 
-const hands = [...document.querySelectorAll('.select img')];
+const startTime = new Date().getTime();
+
+let activeCard = "";
 
 
-function handSelection() {
-    game.playerHand = this.dataset.option;
-    hands.forEach(hand => hand.style.boxShadow = "")
-    this.style.boxShadow = "0 0 0 4px yellow";
-    // console.log(game.playerHand);
-}
 
-function aiChoice() {
-    const aiHand = hands[Math.floor(Math.random() * 3)].dataset.option;
-    return aiHand
-}
+const activeCards = [];
 
-function checkResult(player, ai) {
-    console.log(player, ai);
-    if (player === ai) {
-        return 'draw';
-    } else if ((player === "papier" && ai === "kamień") || (player === "kamień" && ai === "nożyczki") || (player === "nożyczki" && ai === "papier")) {
-        return 'win';
+const gamePairs = cards.length / 2;
+let gameResult = 0;
+
+const clickCard = function () {
+    activeCard = this;
+    if (activeCard == activeCards[0]) return;
+    activeCard.classList.remove("hidden");
+
+    if (activeCards.length === 0) {
+        activeCards[0] = activeCard;
+        return;
     } else {
-        return "loss";
+        cards.forEach(card => card.removeEventListener("click", clickCard));
+        activeCards[1] = activeCard;
+        setTimeout(function () {
+            if (activeCards[0].className === activeCards[1].className) {
+                // console.log("wygrana");
+                activeCards.forEach(card =>
+                    card.classList.add("off"))
+                gameResult++;
+                cards = cards.filter(card => !card.classList.contains("off"));
+                if (gameResult == gamePairs) {
+                    const endTime = new Date().getTime();
+                    const gameTime = (endTime - startTime) / 1000;
+                    alert(`Udało się twój wynik to ${gameTime} sekund`);
+                    location.reload();
+                }
+
+            } else {
+                // console.log("przegrana");
+                activeCards.forEach(card =>
+                    card.classList.add("hidden"))
+
+            }
+            activeCard = "";
+            activeCards.length = 0;
+            cards.forEach(card =>
+                card.addEventListener("click", clickCard))
+        }, 500)
+
     }
-}
+};
 
-function publishResult(player, ai, result) {
-    document.querySelector('[data-summary="your-choice"]').textContent = player;
-    document.querySelector('[data-summary="ai-choice"]').textContent = ai;
-    document.querySelector('p.numbers span').textContent = ++gameSummary.numbers;
 
-    if (result === "win") {
-        document.querySelector('p.wins span').textContent = ++gameSummary.wins;
-        document.querySelector('[data-summary="who-win"]').textContent = "Ty wygrałes";
-        document.querySelector('[data-summary="who-win"]').style.color = "green";
-    } else if (result === "loss") {
-        document.querySelector('p.losses span').textContent = ++gameSummary.losses;
-        document.querySelector('[data-summary="who-win"]').textContent = "Komputer wygrał";
-        document.querySelector('[data-summary="who-win"]').style.color = "red";
-    } else {
-        document.querySelector('p.draws span').textContent = ++gameSummary.draws;
-        document.querySelector('[data-summary="who-win"]').textContent = "Remis";
-        document.querySelector('[data-summary="who-win"]').style.color = "grey";
-    }
-}
+const init = function () {
+    cards.forEach(card => {
+        const position = Math.floor(Math.random() * cardsColor.length);
+        card.classList.add(cardsColor[position]);
+        cardsColor.splice(position, 1);
+    })
 
-function endGame() {
-    document.querySelector('[data-option ="' + game.playerHand + '"]').style.boxShadow = "";
-    game.playerHand = "";
-}
+    setTimeout(function () {
+        cards.forEach(card => {
+            card.classList.add("hidden");
+            card.addEventListener("click", clickCard);
+        })
+    }, 1000)
+};
 
-function startGame() {
-    if (game.playerHand === '') {
-        return alert("wybierz dłoń!");
-    }
-    game.aiHand = aiChoice();
-    const gameResult = checkResult(game.playerHand, game.aiHand);
-    console.log(gameResult);
-    publishResult(game.playerHand, game.aiHand, gameResult);
-    endGame();
-}
-
-hands.forEach(hand => hand.addEventListener("click", handSelection));
-document.querySelector('.start').addEventListener("click", startGame);
+init();
