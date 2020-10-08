@@ -1,73 +1,62 @@
-const cardsColor = ["red", "red", "green", "green", "blue", "blue", "brown", "brown", "yellow", "yellow", "gray", "gray", "cadetblue", "cadetblue", "violet", "violet", "lightgreen", "lightgreen"];
+const form = document.querySelector("form")
+const ul = document.querySelector("ul")
+const taskNumber = document.querySelector("h1 span")
+const liElements = document.getElementsByClassName("task")
+const input = document.querySelector("input")
+const input2 = document.querySelector(".input2")
+const toDoList = [];
 
-let cards = document.querySelectorAll('div');
-cards = [...cards];
-
-const startTime = new Date().getTime();
-
-let activeCard = "";
-
-
-
-const activeCards = [];
-
-const gamePairs = cards.length / 2;
-let gameResult = 0;
-
-const clickCard = function () {
-    activeCard = this;
-    if (activeCard == activeCards[0]) return;
-    activeCard.classList.remove("hidden");
-
-    if (activeCards.length === 0) {
-        activeCards[0] = activeCard;
-        return;
-    } else {
-        cards.forEach(card => card.removeEventListener("click", clickCard));
-        activeCards[1] = activeCard;
-        setTimeout(function () {
-            if (activeCards[0].className === activeCards[1].className) {
-                // console.log("wygrana");
-                activeCards.forEach(card =>
-                    card.classList.add("off"))
-                gameResult++;
-                cards = cards.filter(card => !card.classList.contains("off"));
-                if (gameResult == gamePairs) {
-                    const endTime = new Date().getTime();
-                    const gameTime = (endTime - startTime) / 1000;
-                    alert(`Udało się twój wynik to ${gameTime} sekund`);
-                    location.reload();
-                }
-
-            } else {
-                // console.log("przegrana");
-                activeCards.forEach(card =>
-                    card.classList.add("hidden"))
-
-            }
-            activeCard = "";
-            activeCards.length = 0;
-            cards.forEach(card =>
-                card.addEventListener("click", clickCard))
-        }, 500)
-
-    }
-};
-
-
-const init = function () {
-    cards.forEach(card => {
-        const position = Math.floor(Math.random() * cardsColor.length);
-        card.classList.add(cardsColor[position]);
-        cardsColor.splice(position, 1);
+const removeTask = (e) => {
+    // e.target.parentNode.remove();
+    const index = e.target.parentNode.dataset.key;
+    toDoList.splice(index, 1);
+    ul.textContent = "";
+    toDoList.forEach((toDoElement, key) => {
+        toDoElement.dataset.key = key;
+        ul.appendChild(toDoElement);
     })
+    taskNumber.textContent = liElements.length;
 
-    setTimeout(function () {
-        cards.forEach(card => {
-            card.classList.add("hidden");
-            card.addEventListener("click", clickCard);
+}
+let num = 0;
+
+const addTask = (e) => {
+    e.preventDefault();
+    const text = input.value;
+    if (text === "") return
+    const task = document.createElement("li");
+    task.className = "task";
+    task.innerHTML = text + "<button>Usuń</button>";
+    toDoList.push(task);
+    ul.textContent = "";
+    toDoList.forEach((toDoElement, key) => {
+        toDoElement.dataset.key = key;
+        ul.appendChild(toDoElement);
+    })
+    ul.appendChild(task);
+    input.value = "";
+    taskNumber.textContent = liElements.length;
+    task.querySelector('button').addEventListener('click', removeTask);
+
+}
+
+const searchTask = (e) => {
+    const searchText = e.target.value.toLowerCase();
+    // let tasks = [...liElements];
+    let tasks = toDoList.filter(task => task.textContent.toLowerCase().includes(searchText));
+    ul.textContent = "";
+    tasks.forEach(task => ul.appendChild(task));
+
+    if (searchText === "") {
+        ul.textContent = "";
+        taskNumber.textContent = liElements.length;
+        toDoList.forEach((toDoElement, key) => {
+            toDoElement.dataset.key = key;
+            ul.appendChild(toDoElement);
         })
-    }, 1000)
-};
+    }
+    taskNumber.textContent = liElements.length;
+}
 
-init();
+form.addEventListener("submit", addTask);
+input2.addEventListener("input", searchTask);
