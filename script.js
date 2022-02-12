@@ -7,8 +7,9 @@ const input2 = document.querySelector(".input2")
 const toDoList = [];
 
 const removeTask = e => {
-  const index = e.target.parentNode.dataset.key;
-  toDoList.splice(index, 1);
+  const elementIndex = e.target.parentNode.dataset.key;
+  removeLocalTodos(elementIndex);
+  toDoList.splice(elementIndex, 1);
   ul.textContent = "";
   toDoList.forEach((toDoElement, key) => {
     toDoElement.dataset.key = key;
@@ -19,11 +20,12 @@ const removeTask = e => {
 
 const addTask = e => {
   e.preventDefault();
-  const text = input.value;
-  if (text === "") return;
+  const elementValue = input.value;
+  if (elementValue === "") return;
+  saveLocalTodos(elementValue);
   const task = document.createElement("li");
   task.className = "task";
-  task.innerHTML = text + " <button>Usuń</button>";
+  task.innerHTML = elementValue + " <button>Usuń</button>";
   toDoList.push(task);
   toDoList.forEach((toDoElement, key) => {
     toDoElement.dataset.key = key;
@@ -50,5 +52,50 @@ const searchTask = e => {
   taskNumber.textContent = tasks.length;
 }
 
+const saveLocalTodos = (task) => {
+  let todos;
+  if (localStorage.getItem("todos") === null) {
+    todos = [];
+  } else {
+    todos = JSON.parse(localStorage.getItem("todos"));
+  }
+  todos.push(task);
+  localStorage.setItem("todos", JSON.stringify(todos));
+}
+
+const removeLocalTodos = (task) => {
+  let todos;
+  if (localStorage.getItem("todos") === null) {
+    todos = [];
+  } else {
+    todos = JSON.parse(localStorage.getItem("todos"));
+  }
+  todos.splice(task, 1);
+  localStorage.setItem("todos", JSON.stringify(todos));
+}
+
+const getLocalTodos = () => {
+  let todos;
+  if (localStorage.getItem("todos") === null) {
+    todos = [];
+  } else {
+    todos = JSON.parse(localStorage.getItem("todos"));
+  }
+  todos.forEach((todo) => {
+    const elementValue = todo;
+    const task = document.createElement("li");
+    task.className = "task";
+    task.innerHTML = elementValue + " <button>Usuń</button>";
+    toDoList.push(task);
+    toDoList.forEach((toDoElement, key) => {
+      toDoElement.dataset.key = key;
+      ul.appendChild(toDoElement);
+    })
+    taskNumber.textContent = toDoList.length;
+    task.querySelector('button').addEventListener('click', removeTask);
+  })
+}
+
+document.addEventListener("DOMContentLoaded", getLocalTodos);
 form.addEventListener("submit", addTask);
 input2.addEventListener("input", searchTask);
