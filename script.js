@@ -1,9 +1,8 @@
 const form = document.querySelector("form")
 const ul = document.querySelector("ul")
-const taskNumber = document.querySelector("h1 span")
-const liElements = document.getElementsByClassName("task")
-const input = document.querySelector("input")
-const input2 = document.querySelector(".input2")
+const taskNumber = document.querySelector("h2 span")
+const addInput = document.querySelector(".addInput")
+const searchInput = document.querySelector(".searchInput")
 const toDoList = [];
 
 const removeTask = e => {
@@ -20,7 +19,7 @@ const removeTask = e => {
 
 const addTask = e => {
   e.preventDefault();
-  const elementValue = input.value;
+  const elementValue = addInput.value;
   if (elementValue === "") return;
   saveLocalTodos(elementValue);
   const task = document.createElement("li");
@@ -31,7 +30,7 @@ const addTask = e => {
     toDoElement.dataset.key = key;
     ul.appendChild(toDoElement);
   });
-  input.value = "";
+  addInput.value = "";
   taskNumber.textContent = toDoList.length;
   task.querySelector('button').addEventListener('click', removeTask);
 }
@@ -98,4 +97,4 @@ const getLocalTodos = () => {
 
 document.addEventListener("DOMContentLoaded", getLocalTodos);
 form.addEventListener("submit", addTask);
-input2.addEventListener("input", searchTask);
+searchInput.addEventListener("input", searchTask);
